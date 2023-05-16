@@ -6,34 +6,36 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "@react-navigation/native";
 
+const formSchema = Yup.object().shape({
+    email: Yup.string()
+        .email()
+        .required("Email is required"),
+    password: Yup.string()
+        .required("Password is required")
+        .min(4, "Password length should be at least 4 characters")
+        .max(12, "Password cannot exceed more than 12 characters"),
+    cpassword: Yup.string()
+        .required("Confirm Password is required")
+        .min(4, "Password length should be at least 4 characters")
+        .max(12, "Password cannot exceed more than 12 characters")
+        .oneOf([Yup.ref("password")], "Passwords do not match")
+});
+
 export default function Register({ navigation }) {
     const { register, control, handleSubmit, formState: {errors} } = useForm({
         resolver: yupResolver(formSchema),
         defaultValues: {
             email: 'nathanleduc@hotmail.fr',
             password: '1234',
-            cppassword: '1234'
+            cpassword: '1234'
         }
     })
 
-    const formSchema = Yup.object().shape({
-        password: Yup.string()
-          .required("Password is required")
-          .min(4, "Password length should be at least 4 characters")
-          .max(12, "Password cannot exceed more than 12 characters"),
-        cpassword: Yup.string()
-          .required("Confirm Password is required")
-          .min(4, "Password length should be at least 4 characters")
-          .max(12, "Password cannot exceed more than 12 characters")
-          .oneOf([Yup.ref("password")], "Passwords do not match")
-    });
-
     const onSubmit = async (data) => {
-        console.log(data)
+        // Remove cpassword from data to be ok with api schema restrictions
+        delete data.cpassword
+        return console.log(data)
     }
-
-
-
 
     return(
         <SafeAreaView style={styles.safeArea}>
@@ -62,7 +64,7 @@ export default function Register({ navigation }) {
                                 )}
                                 name="email"
                             />
-                            {errors.password && <Text style={styles.errorMessage}>{errors.password.message}</Text>}
+                            {errors.email && <Text style={styles.errorMessage}>{errors.email.message}</Text>}
                         </View>
                         <View style={styles.formGroup}>
                             <Text style={styles.formLabel}>Password</Text>
@@ -85,6 +87,7 @@ export default function Register({ navigation }) {
                                 )}
                                 name="password"
                             />
+                            {errors.password && <Text style={styles.errorMessage}>{errors.password.message}</Text>}
                         </View>
                         <View style={styles.formGroup}>
                             <Text style={styles.formLabel}>Confirm password</Text>
@@ -103,15 +106,16 @@ export default function Register({ navigation }) {
                                         type="password"
                                     />
                                 )}
-                                name="cppassword"
+                                name="cpassword"
                             />
+                            {errors.cpassword && <Text style={styles.errorMessage}>{errors.cpassword.message}</Text>}
                         </View>
                     </View>
                     <Pressable style={styles.button1} onPress={handleSubmit(onSubmit)}>
                         <Text style={styles.buttonText}>Send</Text>
                     </Pressable>
                     <Text style={styles.signInText}>
-                        You already have an account ? 
+                        You already have an account ?
                         <Link style={styles.link} to={{ screen: "Home" }}> Sign in</Link>
                     </Text>
                 </ScrollView>
@@ -122,7 +126,7 @@ export default function Register({ navigation }) {
 
 const styles = StyleSheet.create({
     safeArea: {
-        backgroundColor: "#26282C"
+        backgroundColor: "#1A212C"
     },
     pageContainer: {
         minHeight: "100%",
