@@ -1,12 +1,49 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import * as SecureStore from "expo-secure-store";
+
 import Header from "../components/Header";
 
 export default function Home({ navigation }) {
+    const [ userToken, setUserToken ] = useState(null)
+
+    useEffect(()=>{
+        const bootstrapAsync = async () => {
+            let token = await SecureStore.getItemAsync('userToken')
+            setUserToken(token)
+        }
+        bootstrapAsync()
+    },[])
+
+    useEffect(()=>{
+        console.log(userToken)
+    },[userToken])
+
     return(
         <SafeAreaView style={styles.safeArea}>
             <Header/>
             <ScrollView style={styles.pageContainer}>
+                <Pressable style={styles.listItem}>
+                    <Text style={styles.itemText}>New checkList</Text>
+                </Pressable>
+                <Pressable style={styles.listItem}>
+                    <Text style={styles.itemText}>New checkList</Text>
+                </Pressable>
+                <Pressable style={styles.listItem}>
+                    <Text style={styles.itemText}>New checkList</Text>
+                </Pressable>
+                <Pressable style={styles.listItem}>
+                    <Text style={styles.itemText}>New checkList</Text>
+                </Pressable>
+                <Pressable style={styles.listItem}>
+                    <Text style={styles.itemText}>New checkList</Text>
+                </Pressable>
+                <Pressable style={styles.listItem}>
+                    <Text style={styles.itemText}>New checkList</Text>
+                </Pressable>
+                <Pressable style={styles.listItem}>
+                    <Text style={styles.itemText}>New checkList</Text>
+                </Pressable>
                 <Pressable style={styles.listItem}>
                     <Text style={styles.itemText}>New checkList</Text>
                 </Pressable>
@@ -20,10 +57,10 @@ export default function Home({ navigation }) {
 
 const styles = StyleSheet.create({
     safeArea: {
-        backgroundColor: "#26282C"
+        backgroundColor: "#1A212C"
     },
     pageContainer: {
-        minHeight: "100%",
+        height: "88.3%",
         padding: 20,
     },
     listItem: {
@@ -34,6 +71,7 @@ const styles = StyleSheet.create({
     },
     itemText: {
         color: "#FFFDFB",
-        fontSize: 20
+        fontSize: 20,
+        textAlign: "center"
     }
 })

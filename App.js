@@ -5,6 +5,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './src/screens/Home';
 import Register from './src/screens/Register';
+import RegisterValidation from './src/screens/RegisterConfirmation';
+import Login from './src/screens/Login';
 
 const Stack = createNativeStackNavigator()
 
@@ -30,7 +32,7 @@ export default function App() {
             screenOptions={{
               headerShown: false
             }}
-            initialRouteName="Register"
+            initialRouteName="Login"
           >
             <Stack.Screen
                 name="Home"
@@ -39,6 +41,14 @@ export default function App() {
               <Stack.Screen
                 name="Register"
                 component={Register}
+              />
+              <Stack.Screen
+                name="Login"
+                component={Login}
+              />
+              <Stack.Screen
+                name="RegisterConfirmation"
+                component={RegisterValidation}
               />
           </Stack.Navigator>
       </NavigationContainer>

@@ -4,7 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 export default function Header() {
     return (
         <View style={styles.header}>
-            <Text style={styles.title}>ATTENTION</Text>
+            <Text style={styles.title}>Tdapp</Text>
         </View>
     )
 }
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#1A212C",
         width: "100%",
         padding: 20,
-        marginBottom: 20,
+        marginBottom: 0,
         shadowColor: '#000',
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: .2,

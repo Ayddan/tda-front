@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "@react-navigation/native";
 import Lottie  from "lottie-react-native";
+import * as SecureStore from "expo-secure-store";
 
 import Header from "../components/Header";
 import { API_URL } from '@env';
@@ -17,14 +18,9 @@ const formSchema = Yup.object().shape({
         .required("Password is required")
         .min(8, "Password length should be at least 4 characters")
         .max(12, "Password cannot exceed more than 12 characters"),
-    cpassword: Yup.string()
-        .required("Confirm Password is required")
-        .min(8, "Password length should be at least 4 characters")
-        .max(12, "Password cannot exceed more than 12 characters")
-        .oneOf([Yup.ref("password")], "Passwords do not match")
 });
 
-export default function Register({ navigation }) {
+export default function Login({ navigation }) {
     const [ error, setError ] = useState(null)
     const [ loading, setLoading ] = useState(false)
     const { register, control, handleSubmit, formState: {errors}, reset } = useForm({
@@ -32,14 +28,13 @@ export default function Register({ navigation }) {
         defaultValues: {
             email: 'nathanleduc@hotmail.fr',
             password: '12341234',
-            cpassword: '12341234'
         }
     })
     
 
     const onSubmit = async (data) => {
         setLoading(true)
-        fetch(`${API_URL}/auth/register`,{
+        fetch(`${API_URL}/auth/authenticate`,{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -49,13 +44,15 @@ export default function Register({ navigation }) {
         .then(resp => resp.json())
         .then(data => {
             setLoading(false)
+            console.log(data)
             if(!data.success) return setError(data.message)
             reset({
                 email: "",
-                password: "",
-                cpassword: ""
+                password: ""
             })
-            navigation.replace('RegisterConfirmation')
+            SecureStore.setItemAsync("userToken", JSON.stringify(data.token))
+            navigation.replace('Home')
+            navigation.popToTop()
         })
         .catch(err => {
             setError("Une erreur est survenue, réessayez plus tard")
@@ -69,7 +66,7 @@ export default function Register({ navigation }) {
             <Header/>
             <KeyboardAvoidingView keyboardVerticalOffset={20} behavior="padding">
                 <ScrollView style={styles.pageContainer}>
-                    <Text style={styles.pageTitle}>Sign up</Text>
+                    <Text style={styles.pageTitle}>Sign in</Text>
                     <View style={styles.form}>
                         <View style={styles.formGroup}>
                             <Text style={styles.formLabel}>Email</Text>
@@ -118,29 +115,6 @@ export default function Register({ navigation }) {
                             />
                             {errors.password && <Text style={styles.errorMessage}>{errors.password.message}</Text>}
                         </View>
-                        <View style={styles.formGroup}>
-                            <Text style={styles.formLabel}>Confirm password</Text>
-                            <Controller
-                                control={control}
-                                rules={{
-                                    required: true,
-                                    maxLength: 100
-                                }}
-                                render={({field:{onChange,onBlur,value}})=>(
-                                    <TextInput
-                                        style={styles.input}
-                                        onBlur={onBlur}
-                                        onChangeText={onChange}
-                                        value={value}
-                                        type="password"
-                                        placeholder='*********'
-                                        placeholderTextColor='#969696'
-                                    />
-                                )}
-                                name="cpassword"
-                            />
-                            {errors.cpassword && <Text style={styles.errorMessage}>{errors.cpassword.message}</Text>}
-                        </View>
                     </View>
                     <Pressable style={styles.button1} onPress={handleSubmit(onSubmit)}>
                         {loading ? 
@@ -153,8 +127,8 @@ export default function Register({ navigation }) {
                         {error && <Text style={styles.errorMessage}>{error}</Text>}
                     </View>
                     <Text style={styles.signInText}>
-                        You already have an account ?
-                        <Link style={styles.link} to={{ screen: "Login" }}> Sign in</Link>
+                        You dont have an account ?
+                        <Link style={styles.link} to={{ screen: "Register" }}> Sign up</Link>
                     </Text>
                 </ScrollView>
             </KeyboardAvoidingView>
